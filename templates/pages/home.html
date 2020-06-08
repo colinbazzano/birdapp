@@ -2,9 +2,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-Welcome to Birdapp!
+<div class="row text-center">
+  <div class="col">
+    <h2>Welcome to Birdapp!</h2>
+  </div>
+</div>
 
-<div id="tweets">
+<div class="row" id="tweets">
   Loading...
 </div>
 
@@ -22,8 +26,34 @@ Welcome to Birdapp!
   const url = "/tweets";
   const responseType = "json";
 
+  function handleDidLike(tweet_id, currentCount) {
+    console.log(tweet_id, currentCount);
+  }
+
+  //   function likeBtn(tweet) {
+  //     return `<button class='btn btn-primary onClick=${handleDidLike(
+  //       tweet.id,
+  //       tweet.likes
+  //     )}'>Like</button>`;
+  //   }
+  function likeBtn(tweet) {
+    return (
+      "<button class='btn btn-primary' onClick=handleDidLike(" +
+      tweet.id +
+      "," +
+      tweet.likes +
+      ")>" +
+      tweet.likes +
+      " Likes</button>"
+    );
+  }
+
   function formatTweetElement(tweet) {
-    let formattedTweet = `<div class='mb-4 tweet' id='"tweet-${tweet.id}"'><p>${tweet.content}</p></div>`;
+    let formattedTweet = `<div class=' col-12 col-md-10 mx-auto border rounded py-3 mb-4 tweet' id='"tweet-${
+      tweet.id
+    }"'><p>${tweet.content}</p> <div class='btn-group'>${likeBtn(
+      tweet
+    )}</div></div>`;
     return formattedTweet;
   }
   // set up the XHR
