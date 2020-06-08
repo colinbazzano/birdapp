@@ -1,0 +1,26 @@
+<!--prettier-ignore -->
+{% extends 'base.html' %}
+
+{% block content %}
+Welcome to Birdapp!
+
+<script>
+  const xhr = new XMLHttpRequest(); // xhr = SomeClass() <-- in Python
+  const method = "GET";
+  const url = "/tweets";
+  const responseType = "json";
+
+  // set up the XHR
+  xhr.responseType = responseType; // .responseType = JSON
+  // open up with this request method and this url
+  xhr.open(method, url);
+  xhr.onload = function () {
+    console.log(xhr.response);
+    const serverResponse = xhr.response;
+    let listedItems = serverResponse.response;
+    console.log(listedItems);
+  };
+  // trigger the request
+  xhr.send();
+</script>
+{% endblock content %}
