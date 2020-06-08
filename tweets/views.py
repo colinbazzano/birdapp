@@ -4,12 +4,27 @@ from django.shortcuts import render
 
 # we do .models because we are in the directory with tweet in it
 from .models import Tweet
+from .forms import TweetForm
 # Create your views here.
 
 
 def home_view(request, *args, **kwargs):
     # return HttpResponse("<h1>Hello World</h1>")
     return render(request, "pages/home.html", context={}, status=200)
+
+
+def tweet_create_view(request, *args, **kwargs):
+    # init tweet form class with data, or not!
+    form = TweetForm(request.POST or None)
+    # checking if the form is valid
+    if form.is_valid():
+        # if it IS valid, we save it, or we can do other form related logic
+        obj = form.save(commit=False)
+        # save it to the database
+        obj.save()
+        # reinit the form as a blank form
+        form = TweetForm()
+    return render(request, 'components/form.html', context={"form": form})
 
 
 def tweet_list_view(request, *args, **kwargs):
