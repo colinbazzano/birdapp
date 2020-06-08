@@ -2,14 +2,60 @@
 {% extends 'base.html' %}
 
 {% block content %}
-Welcome to Birdapp!
+<div class="row text-center">
+  <div class="col">
+    <h2>Welcome to Birdapp!</h2>
+  </div>
+</div>
+
+<div class="row" id="tweets">
+  Loading...
+</div>
 
 <script>
+  const tweetsElement = document.getElementById("tweets"); // getting an HTML elements
+  //   tweetsElement.innerHTML = "Loading..."; // setting new html in the element
+
+  //   let el1 = "<h1>Hi there 1</h1>";
+  //   let el2 = "<h1>Hi there 2</h1>";
+  //   let el3 = "<h1>Hi there 3</h1>";
+  //   tweetsElement.innerHTML = el1 + el2 + el3;
+
   const xhr = new XMLHttpRequest(); // xhr = SomeClass() <-- in Python
   const method = "GET";
   const url = "/tweets";
   const responseType = "json";
 
+  function handleDidLike(tweet_id, currentCount) {
+    console.log(tweet_id, currentCount);
+  }
+
+  //   function likeBtn(tweet) {
+  //     return `<button class='btn btn-primary onClick=${handleDidLike(
+  //       tweet.id,
+  //       tweet.likes
+  //     )}'>Like</button>`;
+  //   }
+  function likeBtn(tweet) {
+    return (
+      "<button class='btn btn-primary' onClick=handleDidLike(" +
+      tweet.id +
+      "," +
+      tweet.likes +
+      ")>" +
+      tweet.likes +
+      " Likes</button>"
+    );
+  }
+
+  function formatTweetElement(tweet) {
+    let formattedTweet = `<div class=' col-12 col-md-10 mx-auto border rounded py-3 mb-4 tweet' id='"tweet-${
+      tweet.id
+    }"'><p>${tweet.content}</p> <div class='btn-group'>${likeBtn(
+      tweet
+    )}</div></div>`;
+    return formattedTweet;
+  }
   // set up the XHR
   xhr.responseType = responseType; // .responseType = JSON
   // open up with this request method and this url
@@ -17,8 +63,25 @@ Welcome to Birdapp!
   xhr.onload = function () {
     console.log(xhr.response);
     const serverResponse = xhr.response;
-    let listedItems = serverResponse.response;
-    console.log(listedItems);
+    const listedItems = serverResponse.response;
+    let finalTweetStr = "";
+    let i;
+    for (i = 0; i < listedItems.length; i++) {
+      console.log("i: ", i);
+      console.log(listedItems[i]);
+      let tweetObj = listedItems[i];
+      //   let currentItem = `<div class='mb-4'><h1> ${listedItems[i].id}</h1><p>${listedItems[i].content}</p></div>`;
+      let currentItem = formatTweetElement(tweetObj);
+      // "<div class='mb-4'><h1>" +
+      // listedItems[i].id +
+      // "</h1>" +
+      // "<p>" +
+      // listedItems[i].content +
+      // "</p></div>";
+      finalTweetStr += currentItem;
+    }
+    tweetsElement.innerHTML = finalTweetStr;
+    // console.log(listedItems); // array of items
   };
   // trigger the request
   xhr.send();
