@@ -1,11 +1,16 @@
 import random
+from django.conf import settings
 from django.http import HttpResponse, Http404, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
+from django.utils.http import is_safe_url
 # we do .models because we are in the directory with tweet in it
 from .models import Tweet
 from .forms import TweetForm
 # Create your views here.
+
+
+ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
 
 def home_view(request, *args, **kwargs):
@@ -14,14 +19,22 @@ def home_view(request, *args, **kwargs):
 
 
 def tweet_create_view(request, *args, **kwargs):
+    # print("ajax", request.is_ajax())
     # init tweet form class with data, or not!
     form = TweetForm(request.POST or None)
     # checking if the form is valid
+    next_url = request.POST.get("next") or None
+    # print("next_url:", next_url)
     if form.is_valid():
         # if it IS valid, we save it, or we can do other form related logic
         obj = form.save(commit=False)
         # save it to the database
         obj.save()
+
+        if request.is_ajax():
+            return JsonResponse({}, status=201)  # 201 for created items
+        if next_url != None and is_safe_url(next_url, ALLOWED_HOSTS):
+            return redirect(next_url)
         # reinit the form as a blank form
         form = TweetForm()
     return render(request, 'components/form.html', context={"form": form})
