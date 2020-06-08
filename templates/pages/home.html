@@ -4,7 +4,13 @@
 {% block content %}
 Welcome to Birdapp!
 
+<div id="tweets">
+  Replace Me
+</div>
+
 <script>
+  const tweetsElement = document.getElementById("tweets");
+  tweetsElement.innerHTML = "Loading...";
   const xhr = new XMLHttpRequest(); // xhr = SomeClass() <-- in Python
   const method = "GET";
   const url = "/tweets";
@@ -18,7 +24,7 @@ Welcome to Birdapp!
     console.log(xhr.response);
     const serverResponse = xhr.response;
     let listedItems = serverResponse.response;
-    console.log(listedItems);
+    console.log(listedItems); // array of items
   };
   // trigger the request
   xhr.send();
