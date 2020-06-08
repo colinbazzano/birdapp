@@ -5,17 +5,27 @@
 Welcome to Birdapp!
 
 <div id="tweets">
-  Replace Me
+  Loading...
 </div>
 
 <script>
-  const tweetsElement = document.getElementById("tweets");
-  tweetsElement.innerHTML = "Loading...";
+  const tweetsElement = document.getElementById("tweets"); // getting an HTML elements
+  //   tweetsElement.innerHTML = "Loading..."; // setting new html in the element
+
+  //   let el1 = "<h1>Hi there 1</h1>";
+  //   let el2 = "<h1>Hi there 2</h1>";
+  //   let el3 = "<h1>Hi there 3</h1>";
+  //   tweetsElement.innerHTML = el1 + el2 + el3;
+
   const xhr = new XMLHttpRequest(); // xhr = SomeClass() <-- in Python
   const method = "GET";
   const url = "/tweets";
   const responseType = "json";
 
+  function formatTweetElement(tweet) {
+    let formattedTweet = `<div class='mb-4 tweet' id='"tweet-${tweet.id}"'><p>${tweet.content}</p></div>`;
+    return formattedTweet;
+  }
   // set up the XHR
   xhr.responseType = responseType; // .responseType = JSON
   // open up with this request method and this url
@@ -23,8 +33,25 @@ Welcome to Birdapp!
   xhr.onload = function () {
     console.log(xhr.response);
     const serverResponse = xhr.response;
-    let listedItems = serverResponse.response;
-    console.log(listedItems); // array of items
+    const listedItems = serverResponse.response;
+    let finalTweetStr = "";
+    let i;
+    for (i = 0; i < listedItems.length; i++) {
+      console.log("i: ", i);
+      console.log(listedItems[i]);
+      let tweetObj = listedItems[i];
+      //   let currentItem = `<div class='mb-4'><h1> ${listedItems[i].id}</h1><p>${listedItems[i].content}</p></div>`;
+      let currentItem = formatTweetElement(tweetObj);
+      // "<div class='mb-4'><h1>" +
+      // listedItems[i].id +
+      // "</h1>" +
+      // "<p>" +
+      // listedItems[i].content +
+      // "</p></div>";
+      finalTweetStr += currentItem;
+    }
+    tweetsElement.innerHTML = finalTweetStr;
+    // console.log(listedItems); // array of items
   };
   // trigger the request
   xhr.send();
