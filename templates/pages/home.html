@@ -19,6 +19,7 @@
       {% csrf_token %}
       <input type="hidden" value="/" name="next" />
       <textarea
+        required="required"
         class="form-control"
         name="content"
         placeholder="What's new?"
@@ -43,14 +44,24 @@
     const url = myForm.getAttribute("action");
     const method = myForm.getAttribute("method");
     const xhr = new XMLHttpRequest();
+    const responseType = "json";
+    xhr.responseType = responseType;
     xhr.open(method, url);
     xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest");
     xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
     xhr.onload = function () {
-      const serverResponse = xhr.response;
-      console.log(xhr.status, serverResponse);
-      const tweetsEl = document.getElementById("tweets");
-      loadTweets(tweetsEl);
+      if (xhr.status === 201) {
+        const newTweetJson = xhr.response;
+        // const newTweetJson = JSON.parse(newTweet);
+        console.log(xhr.status, newTweetJson.likes);
+        // const tweetsEl = document.getElementById("tweets");
+        // loadTweets(tweetsEl);
+        const newTweetElement = formatTweetElement(newTweetJson);
+        console.log(newTweetElement);
+        const ogHtml = tweetsContainerElement.innerHTML;
+        tweetsContainerElement.innerHTML = newTweetElement + ogHtml;
+        myForm.reset();
+      }
     };
     xhr.send(myFormData);
   }
@@ -59,7 +70,7 @@
 
   tweetCreateFormEl.addEventListener("submit", handleFormSubmit);
 
-  const tweetsEl = document.getElementById("tweets"); // getting an HTML elements
+  const tweetsContainerElement = document.getElementById("tweets"); // getting an HTML elements
   //   tweetsElement.innerHTML = "Loading..."; // setting new html in the element
 
   //   let el1 = "<h1>Hi there 1</h1>";
@@ -84,8 +95,8 @@
       let finalTweetStr = "";
       let i;
       for (i = 0; i < listedItems.length; i++) {
-        console.log("i: ", i);
-        console.log(listedItems[i]);
+        // console.log("i: ", i);
+        // console.log(listedItems[i]);
         let tweetObj = listedItems[i];
         //   let currentItem = `<div class='mb-4'><h1> ${listedItems[i].id}</h1><p>${listedItems[i].content}</p></div>`;
         let currentItem = formatTweetElement(tweetObj);
@@ -104,7 +115,7 @@
     xhr.send();
   };
 
-  loadTweets(tweetsEl);
+  loadTweets(tweetsContainerElement);
   function handleDidLike(tweet_id, currentCount) {
     console.log(tweet_id, currentCount);
   }
